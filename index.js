@@ -3,6 +3,10 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors";
 import api from "./src/api/index.js";
+import mongooseInit from "./src/services/db/mongoose.js";
+
+await mongooseInit();
+mongoose.set("debug", true);
 
 const app = express();
 
