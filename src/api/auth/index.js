@@ -1,6 +1,7 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken";
 import User from "../user/model.js";
+import { checkPassword } from "../../services/passwordCrypt/index.js";
 
 const router = new Router();
 
@@ -13,7 +14,7 @@ router.post("/login", async function (request, response, next) {
     const username = decoded.split(":")[0];
     const password = decoded.split(":")[1];
     const user = await User.findOne({ username: username });
-    if (user) {
+    if (user && (await user.checkPassword(password))) {
       const token = jwt.sign(
         {
           user: { id: user.id },
