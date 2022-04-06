@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", validateJWT, async (req, res) => {
   try {
-    const foundPost = await Post.find({ _id: req.params.id });
+    const foundPost = await Post.find({ user: req.params.id });
     return foundPost ? res.json(foundPost) : res.sendStatus(404);
   } catch (e) {
     console.log({ errorGetPostById: e });
@@ -45,6 +45,20 @@ router.post("/", validateJWT, async (req, res) => {
   } catch (e) {
     console.log({ errorPostPost: e });
   }
+});
+
+router.put("/:id", validateJWT, async (req, res) => {
+  const element = await Post.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+  if (element) {
+    element.set({
+      description: req.body.description,
+    });
+    await element.save();
+  }
+  return element ? res.json(element) : res.sendStatus(404);
 });
 
 export default router;
