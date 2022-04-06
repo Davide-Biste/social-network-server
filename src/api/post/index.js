@@ -66,10 +66,17 @@ router.put("/:id", validateJWT, async (req, res) => {
 
 router.delete("/:id", validateJWT, async (req, res) => {
   const username = req.user.username;
+
   const postName = await Post.findOne({
     _id: req.params.id,
     user: req.user._id,
   });
+  const removeId = await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $pullAll: { post: [req.params.id] } },
+    { new: true }
+  );
+
   const result = await Post.deleteOne({
     _id: req.params.id,
     user: req.user._id,
