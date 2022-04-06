@@ -6,7 +6,7 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET,
 });
 
-export const uploadFile = (fileName, path) => {
+export const uploadFile = (fileName, path, username) => {
   try {
     // Read content from the file
     const fileContent = fs.readFileSync(path);
@@ -14,7 +14,7 @@ export const uploadFile = (fileName, path) => {
     // Setting up S3 upload parameters
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: fileName, // File name you want to save as in S3
+      Key: `${username}/${fileName}`, // File name you want to save as in S3
       Body: fileContent,
       ContentType: "image/jpeg",
     };
@@ -28,4 +28,16 @@ export const uploadFile = (fileName, path) => {
   } catch (e) {
     console.log({ errorUploadImage: e });
   }
+};
+
+export const deleteFile = (fileName) => {
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: fileName,
+  };
+
+  s3.deleteObject(params, function (err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else console.log(data); // successful response
+  });
 };

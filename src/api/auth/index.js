@@ -17,7 +17,7 @@ router.post("/login", async function (request, response, next) {
     if (user && (await user.checkPassword(password))) {
       const token = jwt.sign(
         {
-          user: { id: user.id },
+          user: { id: user.id, username: username },
         },
         "secret"
       );
