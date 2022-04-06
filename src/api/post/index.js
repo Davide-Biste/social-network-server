@@ -25,7 +25,10 @@ router.get("/:id", validateJWT, async (req, res) => {
 
 router.post("/", validateJWT, async (req, res) => {
   try {
-    const fileName = req.files.file.name;
+    const currentUser = await User.findOne({ _id: req.user.id });
+    const fileName = `${req.files.file.name.split(".")[0]}${
+      currentUser.post.length
+    }.jpg`;
     const filePath = req.files.file.path;
     const username = req.user.username;
 
