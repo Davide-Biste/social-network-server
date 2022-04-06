@@ -6,6 +6,7 @@ import User from "../user/model.js";
 
 const router = new Router();
 
+//get all post with the user who have created it
 router.get("/", async (req, res) => {
   try {
     return res.json(await Post.find({}).populate("user", "username"));
@@ -14,6 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+//get all post of a single user, passing by id
 router.get("/:id", validateJWT, async (req, res) => {
   try {
     const foundPost = await Post.find({ user: req.params.id });
@@ -23,23 +25,23 @@ router.get("/:id", validateJWT, async (req, res) => {
   }
 });
 
+//upload post, charge on aws, save on mongo the uri, save on user the new post
 router.post("/", validateJWT, async (req, res) => {
   try {
-    const currentUser = await User.findOne({ _id: req.user.id });
-    const fileName = `${req.files.file.name.split(".")[0]}${
-      currentUser.post.length
-    }.jpg`;
+    const newPost = await Post.create({
+      type: req.body.type,
+      description: req.body.description,
+      user: req.user._id,
+    });
+
+    const fileName = `${newPost._id}.jpg`;
     const filePath = req.files.file.path;
     const username = req.user.username;
 
     await uploadFile(fileName, filePath, username);
-    const newPost = await Post.create({
-      type: req.body.type,
-      name: fileName,
-      description: req.body.description,
-      uri: `https://${process.env.AWS_BUCKET_NAME}.s3.eu-central-1.amazonaws.com/${req.user.username}/${fileName}`,
-      user: req.user._id,
-    });
+
+    newPost.uri = `https://${process.env.AWS_BUCKET_NAME}.s3.eu-central-1.amazonaws.com/${username}/${newPost._id}.jpg`;
+    newPost.save();
 
     await User.findByIdAndUpdate(
       req.user._id,
@@ -53,6 +55,7 @@ router.post("/", validateJWT, async (req, res) => {
   }
 });
 
+//modify post, only the description
 router.put("/:id", validateJWT, async (req, res) => {
   const element = await Post.findOne({
     _id: req.params.id,
@@ -67,6 +70,7 @@ router.put("/:id", validateJWT, async (req, res) => {
   return element ? res.json(element) : res.sendStatus(404);
 });
 
+//delete post from db, delete post from aws, delete post from the user.
 router.delete("/:id", validateJWT, async (req, res) => {
   const username = req.user.username;
 
