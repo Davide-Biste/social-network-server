@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const postSchema = mongoose.Schema({
   type: { type: String, required: true, enum: ["photo", "video"] },
+  name: { type: String, required: true },
   description: { type: String },
   uri: { type: String, required: true },
   like: { type: Number, default: 0 },

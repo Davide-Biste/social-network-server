@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateJWT } from "../../services/jwt/index.js";
 import Post from "./model.js";
-import { uploadFile } from "../../services/storage/AWS_s3.js";
+import { deleteFile, uploadFile } from "../../services/storage/AWS_s3.js";
 import User from "../user/model.js";
 
 const router = new Router();
@@ -32,6 +32,7 @@ router.post("/", validateJWT, async (req, res) => {
     await uploadFile(fileName, filePath, username);
     const newPost = await Post.create({
       type: req.body.type,
+      name: fileName,
       description: req.body.description,
       uri: `https://${process.env.AWS_BUCKET_NAME}.s3.eu-central-1.amazonaws.com/${req.user.username}/${fileName}`,
       user: req.user._id,
@@ -64,13 +65,21 @@ router.put("/:id", validateJWT, async (req, res) => {
 });
 
 router.delete("/:id", validateJWT, async (req, res) => {
-  const result = await Post.deleteOne({
+  const username = req.user.username;
+  const postName = await Post.findOne({
     _id: req.params.id,
     user: req.user._id,
   });
-  if (result.deletedCount > 0) {
-  } else {
-    return res.sendStatus(404);
-  }
+  const result = await Post.deleteOne({
+    _id: req.params.id,
+    user: req.user._id,
+  }).then(async (result) => {
+    if (result.deletedCount > 0) {
+      await deleteFile(postName.name, username);
+      res.sendStatus(204);
+    } else {
+      res.sendStatus(404);
+    }
+  });
 });
 export default router;

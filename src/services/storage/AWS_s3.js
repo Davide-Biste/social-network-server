@@ -30,13 +30,13 @@ export const uploadFile = (fileName, path, username) => {
   }
 };
 
-export const deleteFile = (fileName) => {
+export const deleteFile = (fileName, username) => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: fileName,
+    Key: `${username}/${fileName}`,
   };
 
-  s3.deleteObject(params, function (err, data) {
+  s3.deleteObject(params, (err, data) => {
     if (err) console.log(err, err.stack); // an error occurred
     else console.log(data); // successful response
   });
