@@ -5,7 +5,7 @@ import User from "./model.js";
 const router = new Router();
 
 router.get("/", validateJWT, async (req, res) => {
-  return res.json(await User.find({}));
+  return res.json(await User.find({}).populate("post", "uri"));
 });
 
 router.get("/:id", validateJWT, async (req, res) => {

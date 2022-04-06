@@ -29,34 +29,3 @@ export const uploadFile = (fileName, path) => {
     console.log({ errorUploadImage: e });
   }
 };
-
-export const getImage = async (fileName) => {
-  try {
-    const url = s3.getSignedUrl("getObject", {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: fileName,
-      Expires: 60,
-    });
-    return url;
-  } catch (e) {
-    console.log({ errorGetImage: e });
-  }
-};
-
-/*
-export const getImage = async (fileName) => {
-  try {
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: fileName,
-    };
-    s3.getObject(params, function (err, data) {
-      res.writeHead(200, { "Content-Type": "image/jpeg" });
-      res.write(data.Body, "binary");
-      res.end(null, "binary");
-    });
-  } catch (e) {
-    console.log({ errorGetImage: e });
-  }
-};
-*/
