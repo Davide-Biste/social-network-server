@@ -96,4 +96,22 @@ router.delete("/:id", validateJWT, async (req, res) => {
     }
   });
 });
+
+router.put("/like/:id", validateJWT, async (req, res) => {
+  try {
+    const putNewLike = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          whoPutLike: [req.user._id],
+        },
+        $inc: { like: 1 },
+      },
+      { new: true, useFindAndModify: false }
+    );
+    return putNewLike ? res.sendStatus(204) : res.sendStatus(404);
+  } catch (e) {
+    console.log({ errorPutLike: e });
+  }
+});
 export default router;

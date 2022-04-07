@@ -5,6 +5,7 @@ const postSchema = mongoose.Schema({
   description: { type: String },
   uri: { type: String, required: true, default: "loading..." },
   like: { type: Number, default: 0 },
+  whoPutLike: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   user: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
