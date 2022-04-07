@@ -139,4 +139,5 @@ router.put("/like/:id", validateJWT, async (req, res) => {
     console.log({ errorPutLike: e });
   }
 });
+
 export default router;
