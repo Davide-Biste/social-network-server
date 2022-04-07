@@ -5,6 +5,11 @@ import Post from "../post/model.js";
 
 const router = new Router();
 
+router.get("/", async (req, res) => {
+  const comments = await Comment.find({});
+  return comments ? res.json(comments) : res.send(404);
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const commentOfPost = await Comment.find({
@@ -47,5 +52,13 @@ router.put("/:id", validateJWT, async (req, res) => {
   return commentWhoWantModify
     ? res.json(commentWhoWantModify)
     : res.sendStatus(404);
+});
+
+router.delete("/:id", validateJWT, async (req, res) => {
+  const commentWhoWantToDelete = await Comment.findOneAndDelete({
+    _id: req.params.id,
+    user: req.user.id,
+  });
+  return commentWhoWantToDelete ? res.send(204) : res.send(404);
 });
 export default router;
