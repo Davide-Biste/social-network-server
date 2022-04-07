@@ -99,17 +99,52 @@ router.delete("/:id", validateJWT, async (req, res) => {
 
 router.put("/like/:id", validateJWT, async (req, res) => {
   try {
-    const putNewLike = await Post.findByIdAndUpdate(
-      req.params.id,
-      {
-        $push: {
-          whoPutLike: [req.user._id],
+    const currentPostVerifyUserAlreadyliked = await Post.findOne({
+      _id: req.params.id,
+    });
+    if (currentPostVerifyUserAlreadyliked.whoPutLike.length) {
+      currentPostVerifyUserAlreadyliked.whoPutLike.map(async (u) => {
+        if (u.toString() === req.user.id) {
+          //remove the like
+          const removeLike = await Post.findByIdAndUpdate(
+            req.params.id,
+            {
+              $pullAll: {
+                whoPutLike: [req.user._id],
+              },
+              $inc: { like: -1 },
+            },
+            { new: true, useFindAndModify: false }
+          );
+          return removeLike ? res.sendStatus(204) : res.sendStatus(404);
+        } else {
+          //put new like
+          const putNewLike = await Post.findByIdAndUpdate(
+            req.params.id,
+            {
+              $push: {
+                whoPutLike: [req.user._id],
+              },
+              $inc: { like: 1 },
+            },
+            { new: true, useFindAndModify: false }
+          );
+          return putNewLike ? res.sendStatus(204) : res.sendStatus(404);
+        }
+      });
+    } else {
+      const putNewLike = await Post.findByIdAndUpdate(
+        req.params.id,
+        {
+          $push: {
+            whoPutLike: [req.user._id],
+          },
+          $inc: { like: 1 },
         },
-        $inc: { like: 1 },
-      },
-      { new: true, useFindAndModify: false }
-    );
-    return putNewLike ? res.sendStatus(204) : res.sendStatus(404);
+        { new: true, useFindAndModify: false }
+      );
+      return putNewLike ? res.sendStatus(204) : res.sendStatus(404);
+    }
   } catch (e) {
     console.log({ errorPutLike: e });
   }
