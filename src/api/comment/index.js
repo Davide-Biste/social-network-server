@@ -33,4 +33,19 @@ router.post("/:id", validateJWT, async (req, res) => {
   }
 });
 
+router.put("/:id", validateJWT, async (req, res) => {
+  const commentWhoWantModify = await Comment.findOne({
+    _id: req.params.id,
+    user: req.user.id,
+  });
+  if (commentWhoWantModify) {
+    commentWhoWantModify.set({
+      description: req.body.description,
+    });
+    await commentWhoWantModify.save();
+  }
+  return commentWhoWantModify
+    ? res.json(commentWhoWantModify)
+    : res.sendStatus(404);
+});
 export default router;
