@@ -15,7 +15,7 @@ app.use(formData.parse());
 app.use(express.urlencoded({ extended: false }));
 
 const corsOptions = {
-  origin: process.env.SERVER_URI,
+  origin: "*",
   optionsSuccessStatus: 200, // For legacy browser support
   methods: "GET, PUT, POST, DELETE",
 };
