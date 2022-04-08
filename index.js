@@ -14,13 +14,14 @@ const app = express();
 app.use(formData.parse());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(
-  cors({
-    origin: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
-
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", process.env.SERVER_URI); // update to match the domain you will make the request from
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(api);
 
 app.listen(process.env.PORT || 3000, () => {
