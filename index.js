@@ -14,7 +14,13 @@ const app = express();
 app.use(formData.parse());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.SERVER_URI,
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: "GET, PUT, POST, DELETE",
+};
+
+app.use(cors(corsOptions));
 app.use(api);
 
 app.listen(process.env.PORT || 3000, () => {
