@@ -28,6 +28,9 @@ router.get("/:id", validateJWT, async (req, res) => {
 //upload post, charge on aws, save on mongo the uri, save on user the new post
 router.post("/", validateJWT, async (req, res) => {
   try {
+    const filePath = req.files.file.path;
+    const username = req.user.username;
+
     const newPost = await Post.create({
       type: req.body.type,
       description: req.body.description,
@@ -35,8 +38,6 @@ router.post("/", validateJWT, async (req, res) => {
     });
 
     const fileName = `${newPost._id}.jpg`;
-    const filePath = req.files.file.path;
-    const username = req.user.username;
 
     await uploadFile(fileName, filePath, username);
 
