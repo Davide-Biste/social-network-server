@@ -121,7 +121,7 @@ router.put("/like/:id", validateJWT, async (req, res) => {
           },
         },
         { new: true, useFindAndModify: false }
-      );
+      ).populate("user", "username");
       return putNewLike ? res.json(putNewLike) : res.sendStatus(404);
     } else {
       //remove
@@ -133,7 +133,7 @@ router.put("/like/:id", validateJWT, async (req, res) => {
           },
         },
         { new: true, useFindAndModify: false }
-      );
+      ).populate("user", "username");
       return removeLike ? res.json(removeLike) : res.sendStatus(404);
     }
   } catch (e) {
