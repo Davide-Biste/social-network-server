@@ -122,7 +122,7 @@ router.put("/like/:id", validateJWT, async (req, res) => {
         },
         { new: true, useFindAndModify: false }
       );
-      return putNewLike ? res.sendStatus(204) : res.sendStatus(404);
+      return putNewLike ? res.json(putNewLike) : res.sendStatus(404);
     } else {
       //remove
       const removeLike = await Post.findByIdAndUpdate(
@@ -134,7 +134,7 @@ router.put("/like/:id", validateJWT, async (req, res) => {
         },
         { new: true, useFindAndModify: false }
       );
-      return removeLike ? res.sendStatus(204) : res.sendStatus(404);
+      return removeLike ? res.json(removeLike) : res.sendStatus(404);
     }
   } catch (e) {
     console.log({ errorPutLike: e });
