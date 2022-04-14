@@ -67,6 +67,8 @@ router.put("/:id", validateJWT, async (req, res) => {
       description: req.body.description,
     });
     await element.save();
+  } else {
+    res.sendStatus(400);
   }
   return element ? res.json(element) : res.sendStatus(404);
 });
