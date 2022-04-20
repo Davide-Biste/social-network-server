@@ -33,7 +33,7 @@ export const uploadFile = (fileName, path, username) => {
 export const deleteFile = (fileName, username) => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${username}/${fileName}`,
+    Key: `${username}/${fileName.toString()}.jpg`,
   };
 
   s3.deleteObject(params, (err, data) => {
