@@ -90,7 +90,7 @@ router.delete("/:id", validateJWT, async (req, res) => {
     user: req.user._id,
   }).then(async (result) => {
     if (result.deletedCount > 0) {
-      await deleteFile(postName.name, username);
+      await deleteFile(postName._id, username);
       res.sendStatus(204);
     } else {
       res.sendStatus(404);
