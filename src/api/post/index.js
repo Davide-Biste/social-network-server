@@ -42,7 +42,7 @@ router.post("/", validateJWT, async (req, res) => {
 
     const fileName = `${newPost._id}.jpg`;
 
-    await uploadFile(fileName, filePath, username);
+    await uploadFile(fileName, filePath, username, newPost._id.toString());
 
     newPost.uri = `https://${process.env.AWS_BUCKET_NAME}.s3.eu-central-1.amazonaws.com/${username}/${newPost._id}.jpg`;
     newPost.save();
