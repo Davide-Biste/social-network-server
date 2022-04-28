@@ -14,7 +14,7 @@ router.get("/:id", async (req, res) => {
   try {
     const commentOfPost = await Comment.find({
       post: req.params.id,
-    });
+    }).populate("user", "username");
     return commentOfPost ? res.json(commentOfPost) : res.send(404);
   } catch (e) {
     console.log({ errorGetCommentFromPost: e });
