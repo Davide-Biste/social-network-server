@@ -18,7 +18,10 @@ router.get("/", async (req, res) => {
 //get all post of a single user, passing by id
 router.get("/:id", validateJWT, async (req, res) => {
   try {
-    const foundPost = await Post.find({ user: req.params.id });
+    const foundPost = await Post.find({ user: req.params.id }).populate(
+      "user",
+      "username"
+    );
     return foundPost ? res.json(foundPost) : res.sendStatus(404);
   } catch (e) {
     console.log({ errorGetPostById: e });
